@@ -40,7 +40,7 @@ namespace DisasterDataPull.Models.Webeoc
         sb.Append($@"
           SELECT 
             M.dataid,
-            0 as index,
+            { iStr } as index,
             M.activity_date_time_{ iStr } activity_date_time,
             M.activity_notable_activities_{ iStr } activity_notable_activities
           FROM table_260 M
@@ -57,11 +57,9 @@ namespace DisasterDataPull.Models.Webeoc
             AND (LEN(LTRIM(RTRIM(M.activity_date_time_{ iStr }))) > 0 OR
               LEN(LTRIM(RTRIM(M.activity_notable_activities_{ iStr }))) > 0)
         ");
-
-
       }
 
-
+      return Program.Get_Data<WebeocActivity>(sb.ToString(), Program.CS_Type.Webeoc);
     }
   }
 }
