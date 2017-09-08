@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace DisasterDataPull.Models.Webeoc
 {
-  public class WebeocActivity
+  public class Activity
   {
     public int dataid { get; set; }
     public int index { get; set; }
     public int activity_date_time { get; set; }
     public int activity_notable_activities { get; set; }
 
-    public WebeocActivity()
+    public Activity()
     {
 
     }
 
-    public static List<WebeocActivity> Get()
+    public static List<Activity> Get()
     {
       var sb = new StringBuilder(@"
         WITH Base214Data AS (
@@ -40,7 +40,7 @@ namespace DisasterDataPull.Models.Webeoc
         sb.Append($@"
           SELECT 
             M.dataid,
-            { iStr } as index,
+            { iStr } AS index,
             M.activity_date_time_{ iStr } activity_date_time,
             M.activity_notable_activities_{ iStr } activity_notable_activities
           FROM table_260 M
@@ -59,7 +59,7 @@ namespace DisasterDataPull.Models.Webeoc
         ");
       }
 
-      return Program.Get_Data<WebeocActivity>(sb.ToString(), Program.CS_Type.Webeoc);
+      return Program.Get_Data<Activity>(sb.ToString(), Program.CS_Type.Webeoc);
     }
   }
 }

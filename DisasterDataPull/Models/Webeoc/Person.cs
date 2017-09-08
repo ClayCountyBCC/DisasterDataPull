@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DisasterDataPull.Models.Webeoc
 {
-  public class WebeocPerson
+  public class Person
   {
     public int dataid { get; set; }
     public int index { get; set; }
@@ -20,12 +20,12 @@ namespace DisasterDataPull.Models.Webeoc
         return 0; // grab that here.
       }
     }
-    public WebeocPerson()
+    public Person()
     {
 
     }
 
-    public static List<WebeocPerson> Get()
+    public static List<Person> Get()
     {
       var sb = new StringBuilder(@"
         WITH Base214Data AS (
@@ -62,7 +62,7 @@ namespace DisasterDataPull.Models.Webeoc
         sb.Append($@"
           SELECT 
             M.dataid,
-            { iStr } as index,
+            { iStr } AS index,
             M.ics_position_{ iStr } ics_position
             M.name_{ iStr } name,
             M.home_agency_{ iStr } name
@@ -83,7 +83,7 @@ namespace DisasterDataPull.Models.Webeoc
         ");
       }
 
-      return Program.Get_Data<WebeocPerson>(sb.ToString(), Program.CS_Type.Webeoc);
+      return Program.Get_Data<Person>(sb.ToString(), Program.CS_Type.Webeoc);
     }
 
 

@@ -47,9 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ErrorLog.cs" />
-    <Compile Include="Models\Webeoc\CompletedForm.cs" />
-    <Compile Include="Models\Webeoc\WebeocActivity.cs" />
-    <Compile Include="Models\Webeoc\WebeocPerson.cs" />
+    <Compile Include="Models\Webeoc\Form214.cs" />
+    <Compile Include="Models\Webeoc\Activity.cs" />
+    <Compile Include="Models\Webeoc\Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
