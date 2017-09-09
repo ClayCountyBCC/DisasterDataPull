@@ -11,6 +11,8 @@ namespace DisasterDataPull.Models.Webeoc
 {
   public class Person
   {
+    private const Program.CS_Type source = Program.CS_Type.Webeoc;
+    private const Program.CS_Type target = Program.CS_Type.DisasterData;
     public int dataid { get; set; }
     public int person_index { get; set; }
     public string name { get; set; } = "";
@@ -93,12 +95,12 @@ namespace DisasterDataPull.Models.Webeoc
         ");
       }
 
-      return Program.Get_Data<Person>(sb.ToString(), Program.CS_Type.Webeoc);
+      return Program.Get_Data<Person>(sb.ToString(), source);
     }
 
     private static DataTable CreateDataTable()
     {
-      var dt = new DataTable("PersonData");
+      var dt = new DataTable("Person214Data");
       dt.Columns.Add("dataid", typeof(int));
       dt.Columns.Add("person_index", typeof(int));      
       dt.Columns.Add("name", typeof(string));
@@ -122,7 +124,7 @@ namespace DisasterDataPull.Models.Webeoc
         SET NOCOUNT, XACT_ABORT ON;
         USE DisasterData;
 
-        MERGE DisasterData.dbo.Person WITH (HOLDLOCK) AS DDP
+        MERGE DisasterData.dbo.Person214 WITH (HOLDLOCK) AS DDP
 
         USING @Person AS P ON DDP.dataid = P.dataid AND 
           DDP.person_index = P.person_index
@@ -159,9 +161,9 @@ namespace DisasterDataPull.Models.Webeoc
           DELETE;";
       try
       {
-        using (IDbConnection db = new SqlConnection(Program.GetCS(Program.CS_Type.DisasterData)))
+        using (IDbConnection db = new SqlConnection(Program.GetCS(target)))
         {
-          db.Execute(query, new { Person = dt.AsTableValuedParameter("PersonData") });
+          db.Execute(query, new { Person = dt.AsTableValuedParameter("Person214Data") });
         }
       }
 

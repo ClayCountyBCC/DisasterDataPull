@@ -17,12 +17,18 @@ namespace DisasterDataPull
 
     static void Main(string[] args)
     {
-      Models.Webeoc.Form214.PopulateForm214Data();
-      
+      var forms = Models.Webeoc.Form214.Get();
+      var people = Models.Webeoc.Person.Get();
+      var activities = Models.Webeoc.Activity.Get();
+      Models.Webeoc.Form214.Merge(forms);
+      Models.Webeoc.Person.Merge(people);
+      Models.Webeoc.Activity.Merge(activities);
+
+
+      Models.Timestore.Person.Merge(Models.Timestore.Person.Get());
 
     }
-
-
+    
     #region " Data Code "
 
     public static List<T> Get_Data<T>(string query, CS_Type cs)
@@ -103,7 +109,8 @@ namespace DisasterDataPull
       FC_Client_Id = 10,
       GISTracking = 11,
       Webeoc = 12,
-      DisasterData = 13
+      DisasterData = 13,
+      TimestoreProduction = 14
     }
 
     public static string GetCS(CS_Type cs)

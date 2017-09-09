@@ -11,6 +11,8 @@ namespace DisasterDataPull.Models.Webeoc
 {
   public class Form214
   {
+    private const Program.CS_Type source = Program.CS_Type.Webeoc;
+    private const Program.CS_Type target = Program.CS_Type.DisasterData;
     public int incidentid { get; set; }
     public int dataid { get; set; }
     public int prevdataid { get; set; }
@@ -70,7 +72,7 @@ namespace DisasterDataPull.Models.Webeoc
 
     }
 
-    private static List<Form214> Get()
+    public static List<Form214> Get()
     {
       string query = @"
         WITH Base214Data AS (
@@ -104,34 +106,7 @@ namespace DisasterDataPull.Models.Webeoc
           (M.prevdataid > 0 AND 
             B.dataid IS NOT NULL AND 
             C.dataid IS NULL))";
-      return Program.Get_Data<Form214>(query, Program.CS_Type.Webeoc);
-    }
-
-    public static void PopulateForm214Data()
-    {
-      try
-      {
-        var forms = Get();
-        var people = Person.Get();
-        var activities = Activity.Get();
-        Form214.Merge(forms);
-        Person.Merge(people);
-        Activity.Merge(activities);
-        //foreach (Form214 f in forms)
-        //{
-        //  f.staff = (from p in people
-        //             where p.dataid == f.dataid
-        //             select p).ToList();
-        //  f.activities = (from a in activities
-        //                  where a.dataid == f.dataid
-        //                  select a).ToList();
-        //}
-       
-      }
-      catch(Exception ex)
-      {
-        new ErrorLog(ex);       
-      }
+      return Program.Get_Data<Form214>(query, source);
     }
 
     private static DataTable CreateDataTable()
@@ -212,7 +187,7 @@ namespace DisasterDataPull.Models.Webeoc
             DELETE;";
       try
       {
-        using (IDbConnection db = new SqlConnection(Program.GetCS(Program.CS_Type.DisasterData)))
+        using (IDbConnection db = new SqlConnection(Program.GetCS(target)))
         {
           db.Execute(query, new { Form214 = dt.AsTableValuedParameter("Form214Data") });
         }

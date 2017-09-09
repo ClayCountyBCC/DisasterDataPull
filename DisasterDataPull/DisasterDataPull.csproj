@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ErrorLog.cs" />
+    <Compile Include="Models\Timestore\Person.cs" />
     <Compile Include="Models\Webeoc\Form214.cs" />
     <Compile Include="Models\Webeoc\Activity.cs" />
     <Compile Include="Models\Webeoc\Person.cs" />
@@ -62,6 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Pubworks\" />
+    <Folder Include="Models\Telestaff\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

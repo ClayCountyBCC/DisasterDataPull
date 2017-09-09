@@ -11,6 +11,8 @@ namespace DisasterDataPull.Models.Webeoc
 {
   public class Activity
   {
+    private const Program.CS_Type source = Program.CS_Type.Webeoc;
+    private const Program.CS_Type target = Program.CS_Type.DisasterData;
     public int dataid { get; set; }
     public int activity_index { get; set; }
     public DateTime activity_date_time { get; set; } = DateTime.MinValue;
@@ -74,12 +76,12 @@ namespace DisasterDataPull.Models.Webeoc
         ");
       }
 
-      return Program.Get_Data<Activity>(sb.ToString(), Program.CS_Type.Webeoc);
+      return Program.Get_Data<Activity>(sb.ToString(), source);
     }
 
     private static DataTable CreateDataTable()
     {
-      var dt = new DataTable("ActivityData");
+      var dt = new DataTable("Activity214Data");
       dt.Columns.Add("dataid", typeof(int));
       dt.Columns.Add("activity_index", typeof(int));
       dt.Columns.Add("activity_date_time", typeof(DateTime));
@@ -101,7 +103,7 @@ namespace DisasterDataPull.Models.Webeoc
         SET NOCOUNT, XACT_ABORT ON;
         USE DisasterData;
 
-        MERGE DisasterData.dbo.Activity WITH (HOLDLOCK) AS DDA
+        MERGE DisasterData.dbo.Activity214 WITH (HOLDLOCK) AS DDA
 
         USING @Activity AS A ON DDA.dataid = A.dataid AND 
           DDA.activity_index = A.activity_index
@@ -131,9 +133,9 @@ namespace DisasterDataPull.Models.Webeoc
           DELETE;";
       try
       {
-        using (IDbConnection db = new SqlConnection(Program.GetCS(Program.CS_Type.DisasterData)))
+        using (IDbConnection db = new SqlConnection(Program.GetCS(target)))
         {
-          db.Execute(query, new { Activity = dt.AsTableValuedParameter("ActivityData") });
+          db.Execute(query, new { Activity = dt.AsTableValuedParameter("Activity214Data") });
         }
       }
 
