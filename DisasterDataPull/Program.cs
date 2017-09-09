@@ -17,7 +17,7 @@ namespace DisasterDataPull
 
     static void Main(string[] args)
     {
-      var forms = Models.Webeoc.Form214.GetForms();
+      Models.Webeoc.Form214.PopulateForm214Data();
       
 
     }

@@ -107,7 +107,7 @@ namespace DisasterDataPull.Models.Webeoc
       return Program.Get_Data<Form214>(query, Program.CS_Type.Webeoc);
     }
 
-    public static List<Form214> GetForms()
+    public static void PopulateForm214Data()
     {
       try
       {
@@ -126,12 +126,11 @@ namespace DisasterDataPull.Models.Webeoc
         //                  where a.dataid == f.dataid
         //                  select a).ToList();
         //}
-        return forms;
+       
       }
       catch(Exception ex)
       {
-        new ErrorLog(ex);
-        return new List<Form214>();
+        new ErrorLog(ex);       
       }
     }
 
