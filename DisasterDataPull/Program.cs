@@ -22,11 +22,9 @@ namespace DisasterDataPull
       var activities = Models.Webeoc.Activity.Get();
       Models.Webeoc.Form214.Merge(forms);
       Models.Webeoc.Person.Merge(people);
-      Models.Webeoc.Activity.Merge(activities);
-
-
+      Models.Webeoc.Activity.Merge(activities);      
       Models.Timestore.Person.Merge(Models.Timestore.Person.Get());
-
+      Models.Pubworks.Person.Merge(Models.Pubworks.Person.Get());
     }
     
     #region " Data Code "

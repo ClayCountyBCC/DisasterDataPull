@@ -29,6 +29,7 @@ namespace DisasterDataPull.Models.Timestore
     public static List<Person> Get()
     {
       string query = @"
+        USE TimeStore;
         SELECT 
           D.Name disaster_name,
           employee_id,
