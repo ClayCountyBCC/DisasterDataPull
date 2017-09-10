@@ -11,7 +11,7 @@ namespace DisasterDataPull.Models.Pubworks
 {
   public class Person
   {
-    private const Program.CS_Type source = Program.CS_Type.TimestoreProduction;
+    private const Program.CS_Type source = Program.CS_Type.TSPW;
     private const Program.CS_Type target = Program.CS_Type.DisasterData;
     public int work_order_id { get; set; }
     public int activity_id { get; set; }
@@ -36,14 +36,14 @@ namespace DisasterDataPull.Models.Pubworks
         SELECT 
           Activities.WOID work_order_id,
           Activities.ID activity_id,
-          Activities.Date activity_date,
+          CAST(Activities.Date AS DATE) activity_date,
           Activities.Name activity_name,
           Department.Name department_name,
           Locations.Name location_name,
           WorkOrders.Name work_order_name,
           Tasks.Code task_code,
           Tasks.Name task_name,
-          Employees.Code employee_id,
+          CAST(Employees.Code AS INT) employee_id,
           LTRIM(RTRIM(Employees.Name)) + ', ' + 
           LTRIM(RTRIM(Employees.FirstName)) employee_name
         FROM Activities 
@@ -58,14 +58,15 @@ namespace DisasterDataPull.Models.Pubworks
 
     private static DataTable CreateDataTable()
     {
-      var dt = new DataTable("PersonDataPubworks");
-      dt.Columns.Add("work_order_id", typeof(int));
+      var dt = new DataTable("PersonPubworksData");
+      
       dt.Columns.Add("activity_id", typeof(int));
       dt.Columns.Add("activity_date", typeof(DateTime));
       dt.Columns.Add("activity_name", typeof(string));
+      dt.Columns.Add("work_order_id", typeof(int));
+      dt.Columns.Add("work_order_name", typeof(string));
       dt.Columns.Add("department_name", typeof(string));
       dt.Columns.Add("location_name", typeof(string));
-      dt.Columns.Add("work_order_name", typeof(string));
       dt.Columns.Add("task_code", typeof(string));
       dt.Columns.Add("task_name", typeof(string));
       dt.Columns.Add("employee_id", typeof(int));
@@ -76,14 +77,15 @@ namespace DisasterDataPull.Models.Pubworks
     public static void Merge(List<Person> pl)
     {
       DataTable dt = CreateDataTable();
-
       foreach (Person p in pl)
       {
-        dt.Rows.Add(p.work_order_id, p.activity_id, p.activity_date, 
-          p.activity_name.Trim(), p.department_name.Trim(), p.location_name.Trim(),
-          p.work_order_name.Trim(), p.task_code.Trim(), p.task_name.Trim(), 
+        dt.Rows.Add(p.activity_id, p.activity_date,
+          p.activity_name.Trim(), p.work_order_id, p.work_order_name.Trim(),
+          p.department_name.Trim(), p.location_name.Trim(),
+          p.task_code.Trim(), p.task_name.Trim(),
           p.employee_id, p.employee_name.Trim());
       }
+
       string query = @"        
 
         SET NOCOUNT, XACT_ABORT ON;

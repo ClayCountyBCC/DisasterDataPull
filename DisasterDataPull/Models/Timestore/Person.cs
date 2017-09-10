@@ -11,7 +11,7 @@ namespace DisasterDataPull.Models.Timestore
 {
   public class Person
   {
-    private const Program.CS_Type source = Program.CS_Type.TimestoreProduction;
+    private const Program.CS_Type source = Program.CS_Type.TSPW;
     private const Program.CS_Type target = Program.CS_Type.DisasterData;
     public int employee_id { get; set; }
     public DateTime work_date { get; set; }

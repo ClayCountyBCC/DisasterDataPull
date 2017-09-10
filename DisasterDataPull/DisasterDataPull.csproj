@@ -49,9 +49,10 @@
     <Compile Include="Models\ErrorLog.cs" />
     <Compile Include="Models\Pubworks\Person.cs" />
     <Compile Include="Models\Timestore\Person.cs" />
+    <Compile Include="Models\Webeoc\ActionRequest.cs" />
     <Compile Include="Models\Webeoc\Form214.cs" />
-    <Compile Include="Models\Webeoc\Activity.cs" />
-    <Compile Include="Models\Webeoc\Person.cs" />
+    <Compile Include="Models\Webeoc\Activity214.cs" />
+    <Compile Include="Models\Webeoc\Person214.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

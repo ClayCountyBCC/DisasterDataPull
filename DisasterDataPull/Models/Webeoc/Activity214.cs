@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace DisasterDataPull.Models.Webeoc
 {
-  public class Activity
+  public class Activity214
   {
     private const Program.CS_Type source = Program.CS_Type.Webeoc;
     private const Program.CS_Type target = Program.CS_Type.DisasterData;
@@ -31,12 +31,12 @@ namespace DisasterDataPull.Models.Webeoc
     }
     public string activity_notable_activities { get; set; } = "";
 
-    public Activity()
+    public Activity214()
     {
 
     }
 
-    public static List<Activity> Get()
+    public static List<Activity214> Get()
     {
       var sb = new StringBuilder(@"
         WITH Base214Data AS (
@@ -76,7 +76,7 @@ namespace DisasterDataPull.Models.Webeoc
         ");
       }
 
-      return Program.Get_Data<Activity>(sb.ToString(), source);
+      return Program.Get_Data<Activity214>(sb.ToString(), source);
     }
 
     private static DataTable CreateDataTable()
@@ -89,11 +89,11 @@ namespace DisasterDataPull.Models.Webeoc
       return dt;
     }
 
-    public static void Merge(List<Activity> al)
+    public static void Merge(List<Activity214> al)
     {
       DataTable dt = CreateDataTable();
 
-      foreach (Activity a in al)
+      foreach (Activity214 a in al)
       {
         dt.Rows.Add(a.dataid, a.activity_index, a.activity_date_time_local, 
           a.activity_notable_activities.Trim());

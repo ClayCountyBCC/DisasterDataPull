@@ -47,8 +47,8 @@ namespace DisasterDataPull.Models.Webeoc
         }
       }
     }
-    public List<Person> staff { get; set; } = new List<Person>();
-    public List<Activity> activities { get; set; } = new List<Activity>();
+    public List<Person214> staff { get; set; } = new List<Person214>();
+    public List<Activity214> activities { get; set; } = new List<Activity214>();
     public string prepared_by_name { get; set; } = "";
     public string prepared_by_position_title { get; set; } = "";
     public DateTime prepared_by_date_time { get; set; } = DateTime.MinValue;
