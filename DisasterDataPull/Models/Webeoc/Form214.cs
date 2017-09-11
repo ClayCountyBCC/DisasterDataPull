@@ -75,14 +75,6 @@ namespace DisasterDataPull.Models.Webeoc
     public static List<Form214> Get()
     {
       string query = @"
-        WITH Base214Data AS (
-          SELECT 
-            MAX(dataid) dataid, 
-            prevdataid
-          FROM table_260 
-          WHERE prevdataid <> 0
-          GROUP BY prevdataid
-        )
         SELECT 
           M.incidentid,
           M.dataid,
@@ -96,16 +88,9 @@ namespace DisasterDataPull.Models.Webeoc
           M.prepared_by_position_title,
           M.prepared_by_date_time
         FROM table_260 M
-        LEFT OUTER JOIN Base214Data B ON M.dataid = B.dataid
-        LEFT OUTER JOIN Base214Data C ON M.dataid = C.prevdataid
         LEFT OUTER JOIN Positions P ON M.positionid = P.positionid
-        WHERE 
-          ((M.prevdataid = 0 AND 
-            B.dataid IS NULL AND 
-            C.dataid IS NULL) OR 
-          (M.prevdataid > 0 AND 
-            B.dataid IS NOT NULL AND 
-            C.dataid IS NULL))";
+        WHERE
+          M.prevdataid=0";
       return Program.Get_Data<Form214>(query, source);
     }
 

@@ -38,16 +38,7 @@ namespace DisasterDataPull.Models.Webeoc
 
     public static List<Activity214> Get()
     {
-      var sb = new StringBuilder(@"
-        WITH Base214Data AS (
-          SELECT 
-            MAX(dataid) dataid, 
-            prevdataid
-          FROM table_260 
-          WHERE prevdataid <> 0
-          GROUP BY prevdataid
-        )
-");
+      var sb = new StringBuilder("");
       for(int i = 1; i < 25; i++)
       {
         var iStr = i.ToString();
@@ -62,16 +53,8 @@ namespace DisasterDataPull.Models.Webeoc
             M.activity_date_time_{ iStr } activity_date_time,
             M.activity_notable_activities_{ iStr } activity_notable_activities
           FROM table_260 M
-          LEFT OUTER JOIN Base214Data B ON M.dataid = B.dataid
-          LEFT OUTER JOIN Base214Data C ON M.dataid = C.prevdataid
-          LEFT OUTER JOIN Positions P ON M.positionid = P.positionid
           WHERE 
-            ((M.prevdataid = 0 AND 
-              B.dataid IS NULL AND 
-              C.dataid IS NULL) OR 
-            (M.prevdataid > 0 AND 
-              B.dataid IS NOT NULL AND 
-              C.dataid IS NULL))
+            M.prevdataid = 0
             AND LEN(LTRIM(RTRIM(M.activity_notable_activities_{ iStr }))) > 0
         ");
       }

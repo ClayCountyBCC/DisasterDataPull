@@ -41,14 +41,6 @@ namespace DisasterDataPull.Models.Webeoc
     public static List<Person214> Get()
     {
       var sb = new StringBuilder(@"
-        WITH Base214Data AS (
-          SELECT 
-            MAX(dataid) dataid, 
-            prevdataid
-          FROM table_260 
-          WHERE prevdataid <> 0
-          GROUP BY prevdataid
-        )
         SELECT 
           M.dataid,
           0 as person_index,
@@ -56,17 +48,8 @@ namespace DisasterDataPull.Models.Webeoc
           M.name,
           M.home_agency   
         FROM table_260 M
-        LEFT OUTER JOIN Base214Data B ON M.dataid = B.dataid
-        LEFT OUTER JOIN Base214Data C ON M.dataid = C.prevdataid
-        LEFT OUTER JOIN Positions P ON M.positionid = P.positionid
         WHERE 
-          ((M.prevdataid = 0 AND 
-            B.dataid IS NULL AND 
-            C.dataid IS NULL) OR 
-          (M.prevdataid > 0 AND 
-            B.dataid IS NOT NULL AND 
-            C.dataid IS NULL))
-");
+          M.prevdataid=0");
       for (int i = 1; i < 9; i++)
       {
         var iStr = i.ToString();
@@ -79,16 +62,8 @@ namespace DisasterDataPull.Models.Webeoc
             M.name_{ iStr } name,
             M.home_agency_{ iStr } name
           FROM table_260 M
-          LEFT OUTER JOIN Base214Data B ON M.dataid = B.dataid
-          LEFT OUTER JOIN Base214Data C ON M.dataid = C.prevdataid
-          LEFT OUTER JOIN Positions P ON M.positionid = P.positionid
           WHERE 
-            ((M.prevdataid = 0 AND 
-              B.dataid IS NULL AND 
-              C.dataid IS NULL) OR 
-            (M.prevdataid > 0 AND 
-              B.dataid IS NOT NULL AND 
-              C.dataid IS NULL))
+            M.prevdataid=0
             AND (LEN(LTRIM(RTRIM(M.ics_position_{ iStr }))) > 0 OR
               LEN(LTRIM(RTRIM(M.name_{ iStr }))) > 0 OR
               LEN(LTRIM(RTRIM(M.home_agency_{ iStr }))) > 0)

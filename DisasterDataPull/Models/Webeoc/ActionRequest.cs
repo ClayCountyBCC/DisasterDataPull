@@ -47,14 +47,6 @@ namespace DisasterDataPull.Models.Webeoc
     {
       string query = @"
         USE wedb_7;
-        WITH BaseData AS (
-          SELECT 
-            MAX(dataid) dataid, 
-            prevdataid
-          FROM table_422
-          WHERE prevdataid <> 0
-          GROUP BY prevdataid
-        )
         SELECT           
           M.dataid,
           M.prevdataid,
@@ -67,17 +59,10 @@ namespace DisasterDataPull.Models.Webeoc
           M.task_desc_short short_task_desc,
           M.task_description task_desc
         FROM table_422 M
-        LEFT OUTER JOIN BaseData B ON M.dataid = B.dataid
-        LEFT OUTER JOIN BaseData C ON M.dataid = C.prevdataid
         LEFT OUTER JOIN Positions P ON M.positionid = P.positionid
         LEFT OUTER JOIN Incidents I ON I.incidentid = M.incidentid
         WHERE 
-          ((M.prevdataid = 0 AND 
-            B.dataid IS NULL AND 
-            C.dataid IS NULL) OR 
-          (M.prevdataid > 0 AND 
-            B.dataid IS NOT NULL AND 
-            C.dataid IS NULL))";
+          M.prevdataid=0";
       return Program.Get_Data<ActionRequest>(query, source);
     }
 
