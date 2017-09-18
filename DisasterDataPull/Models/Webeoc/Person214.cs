@@ -23,13 +23,29 @@ namespace DisasterDataPull.Models.Webeoc
       get
       {
         name = name.Trim();
-        if(name.Length > 4)
+        if (name.Length > 4)
         {
-          if (int.TryParse(name.Substring(0, 4), out int i))
+          if (int.TryParse(name.Substring(0, 5), out int i))
           {
-            return i;
+            return (i < 1000) ? i - i + 9999 : i;
           }
         }
+        if (name.Length > 3 && name.Substring(0, 1).ToUpper() == "V")
+        {
+          if (int.TryParse(name.Substring(1, 3), out int b))
+          {
+            return b - b + 9999;
+          }
+        }
+
+        if (name.Length > 3)
+        {
+          if (int.TryParse(name.Substring(0, 4), out int j))
+          {
+            return j;
+          }
+        }
+
         return -1;
       }
     }

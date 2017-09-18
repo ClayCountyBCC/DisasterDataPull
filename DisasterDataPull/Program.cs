@@ -26,6 +26,7 @@ namespace DisasterDataPull
       Models.Timestore.Person.Merge(Models.Timestore.Person.Get());
       Models.Pubworks.Person.Merge(Models.Pubworks.Person.Get());
       Models.Webeoc.ActionRequest.Merge(Models.Webeoc.ActionRequest.Get());
+      Models.Telestaff.Person.Merge(Models.Telestaff.Person.Get());
     }
     
     #region " Data Code "

@@ -49,7 +49,7 @@ namespace DisasterDataPull.Models.Timestore
 
     private static DataTable CreateDataTable()
     {
-      var dt = new DataTable("PersonDataTimeStore");
+      var dt = new DataTable("PersonTimeStoreData");
       dt.Columns.Add("employee_id", typeof(int));
       dt.Columns.Add("work_date", typeof(DateTime));
       dt.Columns.Add("disaster_name", typeof(string));

@@ -25,10 +25,34 @@ namespace DisasterDataPull.Models.Webeoc
           return DateTime.Parse("1/1/2000 12:00 AM");
         } else
         {
-          return activity_date_time.ToLocalTime();
+          var mor = TimeZoneInfo.FindSystemTimeZoneById("Morocco Standard Time");
+          var est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+          return TimeZoneInfo.ConvertTime(activity_date_time, mor, est);
+          //return TimeZoneInfo.ConvertTimeFromUtc(activity_date_time, );
+          //return activity_date_time.ToLocalTime();
         }
       }
     }
+    public string category
+    {
+      get
+      {
+
+        string s = activity_notable_activities.Trim();
+        if (s.Length < 2) return "";
+        s = s.Substring(0, 2);
+        if (s.Substring(1, 1) == "-")
+        {
+          return s.Substring(0, 1);
+        }
+        else
+        {
+          return "";
+        }
+        
+      }
+    }
+
     public string activity_notable_activities { get; set; } = "";
 
     public Activity214()
@@ -69,6 +93,7 @@ namespace DisasterDataPull.Models.Webeoc
       dt.Columns.Add("activity_index", typeof(int));
       dt.Columns.Add("activity_date_time", typeof(DateTime));
       dt.Columns.Add("activity_notable_activities", typeof(string));
+      dt.Columns.Add("category", typeof(string));
       return dt;
     }
 
@@ -79,7 +104,7 @@ namespace DisasterDataPull.Models.Webeoc
       foreach (Activity214 a in al)
       {
         dt.Rows.Add(a.dataid, a.activity_index, a.activity_date_time_local, 
-          a.activity_notable_activities.Trim());
+          a.activity_notable_activities.Trim(), a.category);
       }
       string query = @"        
 
@@ -96,7 +121,8 @@ namespace DisasterDataPull.Models.Webeoc
           UPDATE 
           SET
             activity_date_time=A.activity_date_time,
-            activity_notable_activities=A.activity_notable_activities
+            activity_notable_activities=A.activity_notable_activities,
+            category=A.category
 
         WHEN NOT MATCHED BY TARGET THEN
 
@@ -104,12 +130,14 @@ namespace DisasterDataPull.Models.Webeoc
             (dataid,
             activity_index,
             activity_date_time,
-            activity_notable_activities)
+            activity_notable_activities,
+            category)
           VALUES (
             A.dataid,
             A.activity_index,
             A.activity_date_time,
-            A.activity_notable_activities
+            A.activity_notable_activities,
+            A.category
           )
         WHEN NOT MATCHED BY SOURCE THEN
         

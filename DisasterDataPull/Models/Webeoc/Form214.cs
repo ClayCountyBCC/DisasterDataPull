@@ -17,6 +17,7 @@ namespace DisasterDataPull.Models.Webeoc
     public int dataid { get; set; }
     public int prevdataid { get; set; }
     public string position_name { get; set; } = "";
+    public string incident_name { get; set; } = "";
     public DateTime operational_period_from { get; set; } = DateTime.MinValue;
     public DateTime operational_period_from_local
     {
@@ -28,7 +29,10 @@ namespace DisasterDataPull.Models.Webeoc
         }
         else
         {
-          return operational_period_from.ToLocalTime();
+          var mor = TimeZoneInfo.FindSystemTimeZoneById("Morocco Standard Time");
+          var est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+          return TimeZoneInfo.ConvertTime(operational_period_from, mor, est);
+          //return TimeZoneInfo.ConvertTimeFromUtc(operational_period_from, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
         }
       }
     }
@@ -43,7 +47,10 @@ namespace DisasterDataPull.Models.Webeoc
         }
         else
         {
-          return operational_period_to.ToLocalTime();
+          var mor = TimeZoneInfo.FindSystemTimeZoneById("Morocco Standard Time");
+          var est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+          return TimeZoneInfo.ConvertTime(operational_period_to, mor, est);
+          //return TimeZoneInfo.ConvertTimeFromUtc(operational_period_to, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
         }
       }
     }
@@ -62,7 +69,10 @@ namespace DisasterDataPull.Models.Webeoc
         }
         else
         {
-          return prepared_by_date_time.ToLocalTime();
+          var mor = TimeZoneInfo.FindSystemTimeZoneById("Morocco Standard Time");
+          var est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+          return TimeZoneInfo.ConvertTime(prepared_by_date_time, mor, est);
+          //return TimeZoneInfo.ConvertTimeFromUtc(prepared_by_date_time, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
         }
       }
     }
@@ -80,10 +90,11 @@ namespace DisasterDataPull.Models.Webeoc
           M.dataid,
           M.prevdataid,
           P.name position_name,
+          M.incident_name,
           CAST(CAST(M.operational_period_date_from AS DATE) AS DATETIME) + 
-            CAST(CAST(M.operational_period_time_from AS TIME) AS DATETIME) operational_period_from,
+            CAST(M.operational_period_time_from  AS DATETIME) operational_period_from,
           CAST(CAST(M.operational_period_date_to AS DATE) AS DATETIME) + 
-            CAST(CAST(M.operational_period_time_to AS TIME) AS DATETIME) operational_period_to,
+            CAST(M.operational_period_time_to AS DATETIME) operational_period_to,
           M.prepared_by_name,
           M.prepared_by_position_title,
           M.prepared_by_date_time
@@ -101,6 +112,7 @@ namespace DisasterDataPull.Models.Webeoc
       dt.Columns.Add("prevdataid", typeof(int));
       dt.Columns.Add("incidentid", typeof(int));
       dt.Columns.Add("position_name", typeof(string));
+      dt.Columns.Add("incident_name", typeof(string));
       dt.Columns.Add("operational_period_from", typeof(DateTime));
       dt.Columns.Add("operational_period_to", typeof(DateTime));
       dt.Columns.Add("prepared_by_name", typeof(string));
@@ -116,6 +128,7 @@ namespace DisasterDataPull.Models.Webeoc
       foreach (Form214 f in fl)
       {
         dt.Rows.Add(f.dataid, f.prevdataid, f.incidentid, f.position_name.Trim(),
+          f.incident_name.Trim(),
           f.operational_period_from_local, f.operational_period_to_local, 
           f.prepared_by_name.Trim(), f.prepared_by_position_title.Trim(), 
           f.prepared_by_date_time_local);
@@ -136,6 +149,7 @@ namespace DisasterDataPull.Models.Webeoc
             prevdataid=F.prevdataid,
             incidentid=F.incidentid,
             position_name=F.position_name,
+            incident_name=F.incident_name,
             operational_period_from=F.operational_period_from,
             operational_period_to=F.operational_period_to,
             prepared_by_name=F.prepared_by_name,
@@ -149,6 +163,7 @@ namespace DisasterDataPull.Models.Webeoc
             prevdataid,
             incidentid,
             position_name,
+            incident_name,
             operational_period_from,
             operational_period_to,
             prepared_by_name,
@@ -160,6 +175,7 @@ namespace DisasterDataPull.Models.Webeoc
             F.prevdataid,
             F.incidentid,
             F.position_name,
+            F.incident_name,
             F.operational_period_from,
             F.operational_period_to,
             F.prepared_by_name,
