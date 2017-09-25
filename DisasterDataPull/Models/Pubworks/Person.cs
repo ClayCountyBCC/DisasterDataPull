@@ -32,26 +32,31 @@ namespace DisasterDataPull.Models.Pubworks
     public static List<Person> Get()
     {
       string query = @"
-        USE PubWorks;
-        SELECT 
-          Activities.WOID work_order_id,
-          Activities.ID activity_id,
-          CAST(Activities.Date AS DATE) activity_date,
-          Activities.Name activity_name,
-          Department.Name department_name,
-          Locations.Name location_name,
-          WorkOrders.Name work_order_name,
-          Tasks.Code task_code,
-          Tasks.Name task_name,
-          CAST(Employees.Code AS INT) employee_id,
-          LTRIM(RTRIM(Employees.Name)) + ', ' + 
-          LTRIM(RTRIM(Employees.FirstName)) employee_name
-        FROM Activities 
-        LEFT OUTER JOIN WorkOrders ON WorkOrders.ID = Activities.WOID
-        LEFT OUTER JOIN Locations ON Activities.LocID = Locations.ID 
-        LEFT OUTER JOIN Tasks ON Activities.TskID = Tasks.ID 
-        LEFT OUTER JOIN Employees ON Activities.EmpID = Employees.ID
-        LEFT OUTER JOIN Department ON Activities.DeptID = Department.ID
+        USE PubWorks;          
+        SELECT             
+          Activities.WOID work_order_id,           
+          Activities.ID activity_id,           
+          CAST(Activities.Date AS DATE) activity_date,            
+          Activities.Name activity_name,            
+          Department.Name department_name,          
+          Locations.Name location_name,            
+          WorkOrders.Name work_order_name,            
+          Tasks.Code task_code,            
+          Tasks.Name task_name,            
+          CAST(
+            CASE WHEN ISNUMERIC(Employees.Code) != 1 
+            THEN REPLACE(Employees.Code, 'Inmt', '9')
+            ELSE Employees.Code 
+            END 
+            AS INT) employee_id,           
+            LTRIM(RTRIM(Employees.Name)) + ', ' + 
+            LTRIM(RTRIM(Employees.FirstName)) employee_name          
+        FROM Activities           
+        LEFT OUTER JOIN WorkOrders ON WorkOrders.ID = Activities.WOID          
+        LEFT OUTER JOIN Locations ON Activities.LocID = Locations.ID           
+        LEFT OUTER JOIN Tasks ON Activities.TskID = Tasks.ID           
+        LEFT OUTER JOIN Employees ON Activities.EmpID = Employees.ID          
+        LEFT OUTER JOIN Department ON Activities.DeptID = Department.ID         
         WHERE Activities.WOID=39";
       return Program.Get_Data<Person>(query, source);
     }
