@@ -24,6 +24,7 @@ namespace DisasterDataPull.Models.Pubworks
     public string task_name { get; set; } = "";
     public int employee_id { get; set; }
     public string employee_name { get; set; } = "";
+    public double employee_hours { get; set; } = 0;
     public Person ()
     {
 
@@ -50,7 +51,8 @@ namespace DisasterDataPull.Models.Pubworks
             END 
             AS INT) employee_id,           
             LTRIM(RTRIM(Employees.Name)) + ', ' + 
-            LTRIM(RTRIM(Employees.FirstName)) employee_name          
+            LTRIM(RTRIM(Employees.FirstName)) employee_name,
+          Activities.EmpH employee_hours
         FROM Activities           
         LEFT OUTER JOIN WorkOrders ON WorkOrders.ID = Activities.WOID          
         LEFT OUTER JOIN Locations ON Activities.LocID = Locations.ID           
@@ -76,6 +78,7 @@ namespace DisasterDataPull.Models.Pubworks
       dt.Columns.Add("task_name", typeof(string));
       dt.Columns.Add("employee_id", typeof(int));
       dt.Columns.Add("employee_name", typeof(string));
+      dt.Columns.Add("employee_hours", typeof(float));
       return dt;
     }
 
@@ -88,7 +91,7 @@ namespace DisasterDataPull.Models.Pubworks
           p.activity_name.Trim(), p.work_order_id, p.work_order_name.Trim(),
           p.department_name.Trim(), p.location_name.Trim(),
           p.task_code.Trim(), p.task_name.Trim(),
-          p.employee_id, p.employee_name.Trim());
+          p.employee_id, p.employee_name.Trim(), p.employee_hours);
       }
 
       string query = @"        
@@ -114,6 +117,7 @@ namespace DisasterDataPull.Models.Pubworks
             ,task_name=P.task_name
             ,employee_id=P.employee_id
             ,employee_name=P.employee_name
+            ,employee_hours=P.employee_hours
 
         WHEN NOT MATCHED BY TARGET THEN
 
@@ -130,6 +134,7 @@ namespace DisasterDataPull.Models.Pubworks
               ,task_name
               ,employee_id
               ,employee_name
+              ,employee_hours
             )
           VALUES 
             (
@@ -144,6 +149,7 @@ namespace DisasterDataPull.Models.Pubworks
               ,P.task_name
               ,P.employee_id
               ,P.employee_name
+              ,P.employee_hours
             )
 
         WHEN NOT MATCHED BY SOURCE THEN
