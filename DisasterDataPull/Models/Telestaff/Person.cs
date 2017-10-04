@@ -27,6 +27,9 @@ namespace DisasterDataPull.Models.Telestaff
     public double pay_period_hours { get; set; }
     public string comment { get; set; }
     public string unit { get; set; }
+    public string unit_name { get; set; }
+    public int payroll_rule { get; set; } = 0;
+    public double pay_rate { get; set; }
     public Person()
     {
 
@@ -40,6 +43,8 @@ namespace DisasterDataPull.Models.Telestaff
         SELECT 
           Staffing_Tbl.staffing_no_in staffing_id,
           DD.Name disaster_name,
+          ISNULL(DPR.rule_applied, 0) payroll_rule,
+          Resource_Tbl.rsc_hourwage_db pay_rate,
           Staffing_Tbl.Staffing_Calendar_Da work_date, 
           SUM(DATEDIFF(minute,Staffing_Tbl.Staffing_Start_Dt,Staffing_Tbl.Staffing_End_Dt))/60.00 as staffing_hours, 
           Resource_Master_Tbl.RscMaster_Name_Ch employee_name,
@@ -50,7 +55,8 @@ namespace DisasterDataPull.Models.Telestaff
           Wstat_Payroll_ch payroll_code,
           Pay_Information_Tbl.PayInfo_FlsaHours_In pay_period_hours,
           ISNULL(Staffing_tbl.Staffing_Note_Vc, '') comment,
-          Unit_Tbl.unit_abrv_ch unit
+          Unit_Tbl.unit_abrv_ch unit,
+          Unit_Tbl.unit_name_ch unit_name
         FROM Staffing_Tbl 
         LEFT OUTER JOIN strategy_tbl STRAT ON Staffing_tbl.strat_no_in=STRAT.strat_no_in 
         JOIN Resource_Tbl ON Resource_Tbl.Rsc_No_In=Staffing_Tbl.Rsc_No_In 
@@ -63,18 +69,21 @@ namespace DisasterDataPull.Models.Telestaff
         JOIN Unit_Tbl ON Unit_Tbl.Unit_No_In=Position_Tbl.Unit_No_In 
         JOIN Station_Tbl ON Station_Tbl.Station_No_In=Unit_Tbl.Station_No_In   
         INNER JOIN TimeStore.dbo.Disaster_Data DD ON staffing_calendar_da BETWEEN DD.Disaster_Start AND DD.Disaster_End
+        LEFT OUTER JOIN TimeStore.dbo.Disaster_Pay_Rules DPR ON staffing_calendar_da = DPR.disaster_date
         WHERE 
           Station_Tbl.Region_No_In IN (4,2,5,6)       
           AND Wstat_Payroll_ch IS NOT NULL
-          AND Wstat_Payroll_ch NOT IN ('100', '101', '110', '090', '111', '123')
-          AND Wstat_Cde_Tbl.Wstat_Name_Ch NOT IN ('Admin Leave', 'Admin - Working')
-          --AND Wstat_Cde_Tbl.Wstat_Name_Ch LIKE '%disaster%'
+          --AND Wstat_Payroll_ch NOT IN ('100', '101', '110', '090', '111', '123')
+          --AND Wstat_Cde_Tbl.Wstat_Name_Ch NOT IN ('Admin Leave')
           AND Wstat_Cde_Tbl.Wstat_Abrv_Ch NOT IN ('OTR', 'OTRR', 'ORD', 'ORRD', 'NO', 'DPRN') 
           AND (Resource_Master_Tbl.RscMaster_Thru_Da IS NULL OR 
             Resource_Master_Tbl.RscMaster_Thru_Da >= DD.Disaster_Start) 
         GROUP BY
           DD.Name,
           Unit_Tbl.unit_abrv_ch,
+          Unit_Tbl.unit_name_ch,
+          DPR.rule_applied,
+          Resource_Tbl.rsc_hourwage_db,
           Staffing_Tbl.Staffing_Calendar_Da,
           Staffing_Tbl.staffing_no_in,
           Resource_Master_Tbl.RscMaster_Name_Ch,
@@ -106,6 +115,9 @@ namespace DisasterDataPull.Models.Telestaff
       dt.Columns.Add("comment", typeof(string));
       dt.Columns.Add("unit", typeof(string));
       dt.Columns.Add("work_type", typeof(string));
+      dt.Columns.Add("unit_name", typeof(string));
+      dt.Columns.Add("payroll_rule", typeof(int));
+      dt.Columns.Add("pay_rate", typeof(float));
       return dt;
     }
 
@@ -116,9 +128,11 @@ namespace DisasterDataPull.Models.Telestaff
       foreach (Person p in pl)
       {
         dt.Rows.Add(p.staffing_id, p.disaster_name.Trim(), p.work_date,
-          p.staffing_hours, p.employee_name.Trim(), p.employee_id, 
+          p.staffing_hours, p.employee_name.Trim(), p.employee_id,
           p.staffing_start_date, p.staffing_end_date, p.payroll_code,
-          p.pay_period_hours, p.comment.Trim(), p.unit.Trim(), p.work_type.Trim());
+          p.pay_period_hours, p.comment.Trim(), p.unit.Trim(),
+          p.work_type.Trim(), p.unit_name.Trim(), p.payroll_rule,
+          p.pay_rate);
       }
       string query = @"        
 
@@ -144,7 +158,10 @@ namespace DisasterDataPull.Models.Telestaff
             pay_period_hours=P.pay_period_hours,
             comment=P.comment,
             unit=P.unit,
-            work_type=P.work_type
+            work_type=P.work_type,
+            unit_name=P.unit_name,
+            payroll_rule=P.payroll_rule,
+            pay_rate=P.pay_rate
 
         WHEN NOT MATCHED BY TARGET THEN
 
@@ -163,6 +180,9 @@ namespace DisasterDataPull.Models.Telestaff
               ,comment
               ,unit
               ,work_type
+              ,unit_name
+              ,payroll_rule
+              ,pay_rate
             )
           VALUES 
             (
@@ -179,6 +199,9 @@ namespace DisasterDataPull.Models.Telestaff
               ,P.comment
               ,P.unit
               ,P.work_type
+              ,P.unit_name
+              ,P.payroll_rule
+              ,P.pay_rate
             )
 
         WHEN NOT MATCHED BY SOURCE THEN
